@@ -68,6 +68,13 @@ let basic_name () =
   Alcotest.(check_raises "prepend_exn '_foo' to root raises"
               (Invalid_argument "invalid host name")
               (fun () -> ignore (Domain_name.prepend_exn Domain_name.root "_foo"))) ;
+  Alcotest.(check (p_name) "prepend_exn 'foo' to root is valid"
+              (Domain_name.of_string_exn "foo")
+              ((Domain_name.prepend_exn Domain_name.root "foo"))) ;
+    Alcotest.(check_raises "prepend_exn 'foo.foo' to root raises"
+              (Invalid_argument "invalid host name")
+              (fun() -> ignore(Domain_name.prepend_exn ~hostname:false
+                                 Domain_name.root "foo.foo"))) ;
   Alcotest.(check (result p_name p_msg) "of_strings '_foo' ; 'bar' is not valid"
               (Error (`Msg "")) (Domain_name.of_strings [ "_foo" ; "bar" ])) ;
   Alcotest.(check_raises "of_strings_exn '_foo.bar' raises"

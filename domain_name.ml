@@ -73,7 +73,7 @@ let [@inline always] check hostname t =
 let prepend_exn ?(hostname = true) xs lbl =
   let n = Array.make 1 lbl in
   let n = Array.append xs n in
-  if check hostname n then n
+  if not (Astring.String.is_infix ~affix:"." lbl) && check hostname n then n
   else invalid_arg "invalid host name"
 
 let prepend ?hostname xs lbl =
