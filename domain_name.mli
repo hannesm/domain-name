@@ -7,16 +7,22 @@ type 'a t
     representation is 255), but other protocols (such as SMTP) may apply even
     smaller limits.  A domain name label is case preserving, comparison is done
     in a case insensitive manner.  Every [t] is a fully qualified domain name,
-    its last label is the [root] label.
+    its last label is the [root] label. The specification of domain names
+    originates from {{:https://tools.ietf.org/html/rfc1035}RFC 1035}.
 
     The invariants on the length of domain names are preserved throughout the
     module - no [t] will exist which violates these.
 
-    The specification of domain names originates from
-    {{:https://tools.ietf.org/html/rfc1035}RFC 1035}.
+    Phantom types are used for further name restrictions, {!host} checks for
+    host names: only letters, digits, and hyphen allowed, hyphen not first
+    character of a label, the last label must contain at least on letter.
+    {!service} checks for a service name: first label is a service name:
+    1-15 characters, no double-hyphen, hyphen not first or last charactes, only
+    letters, digits and hyphen allowed, and the second label is a protocol
+    (_tcp or _udp or _sctp).
 
-    Constructing a [t] (via [of_string], [of_string_exn], [of_strings]) does
-    not require a trailing dot.
+    Constructing a [t] (via {!of_string}, {!of_string_exn}, {!of_strings} etc.)
+    does not require a trailing dot.
 
     {e %%VERSION%% - {{:%%PKG_HOMEPAGE%% }homepage}}
 *)
