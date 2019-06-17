@@ -61,6 +61,13 @@ val host : 'a t -> ([ `host ] t, [> `Msg of string ]) result
     name is limited: each label may start with a digit or letter, followed by
     digits, letters, or hyphens. *)
 
+val host_exn : 'a t -> [ `host ] t
+(** [host_exn t] is a [`host t] if [t] is a hostname: the contents of the domain
+    name is limited: each label may start with a digit or letter, followed by
+    digits, letters, or hyphens.
+
+    @raise Invalid_argument if [t] is not a hostname. *)
+
 val service : 'a t -> ([ `service ] t, [> `Msg of string ]) result
 (** [service t] is [`service t] if [t] contains a service name, the following
     conditions have to be met:
@@ -75,6 +82,11 @@ val service : 'a t -> ([ `service ] t, [> `Msg of string ]) result
     This function can be used to validate RR's of the types SRV (RFC 2782)
     and TLSA (RFC 7671). *)
 
+val service_exn : 'a t -> [ `service ] t
+(** [service_exn t] is [`service t] if [t] is a service name (see {!service}).
+
+    @raise Invalid_argument if [t] is not a service names. *)
+
 val domain : 'a t -> [ `domain ] t
 (** [domain t] is the [`domain t]. *)
 
@@ -84,34 +96,34 @@ val sub : subdomain:'a t -> domain:'a t -> bool
     [com], [sub ~subdomain:x ~domain:root] is true for all [x]. *)
 
 (** {2 Label addition and removal} *)
-val prepend : 'a t -> string -> ([ `domain ] t, [> `Msg of string ]) result
-(** [prepend name pre] is either [t], the new domain name, or an error. *)
+val prepend_label : 'a t -> string -> ([ `domain ] t, [> `Msg of string ]) result
+(** [prepend_label name pre] is either [t], the new domain name, or an error. *)
 
-val prepend_exn : 'a t -> string -> [ `domain ] t
-(** [prepend_exn name pre] is [t], the new domain name.
+val prepend_label_exn : 'a t -> string -> [ `domain ] t
+(** [prepend_label_exn name pre] is [t], the new domain name.
 
     @raise Invalid_argument if [pre] is not a valid domain name. *)
 
-val drop_labels : ?back:bool -> ?amount:int -> 'a t ->
+val drop_label : ?back:bool -> ?amount:int -> 'a t ->
   ([ `domain ] t, [> `Msg of string ]) result
-(** [drop_labels ~back ~amount t] is either [t], a domain name with [amount]
+(** [drop_label ~back ~amount t] is either [t], a domain name with [amount]
     (defaults to 1) labels dropped from the beginning (unless [back] is provided
-    and [true], defaults to [false]).  [drop_labels] applied to [foo.com] is
+    and [true], defaults to [false]).  [drop_label] applied to [foo.com] is
     [com]. *)
 
-val drop_labels_exn : ?back:bool -> ?amount:int -> 'a t -> [ `domain ] t
-(** [drop_labels_exn ~back ~amount t] is either [t], a domain name with [amount]
+val drop_label_exn : ?back:bool -> ?amount:int -> 'a t -> [ `domain ] t
+(** [drop_label_exn ~back ~amount t] is either [t], a domain name with [amount]
     (defaults to 1) labels dropped from the beginning (unless [back] is provided
-    and [true], defaults to [false]).  [drop_labels] applied to [foo.com] is
+    and [true], defaults to [false]).  [drop_label] applied to [foo.com] is
     [com].
 
     @raise Invalid_argument if there are not sufficient labels. *)
 
-val concat : 'a t -> 'b t -> ([ `domain ] t, [> `Msg of string ]) result
-(** [concat pre post] is [pre ^ "." ^ post]. *)
+val append : 'a t -> 'b t -> ([ `domain ] t, [> `Msg of string ]) result
+(** [append pre post] is [pre ^ "." ^ post]. *)
 
-val concat_exn : 'a t -> 'b t -> [ `domain ] t
-(** [concat_exn pre post] is [pre ^ "." ^ post].
+val append_exn : 'a t -> 'b t -> [ `domain ] t
+(** [append_exn pre post] is [pre ^ "." ^ post].
 
     @raise Invalid_argument if the result would violate length restrictions. *)
 

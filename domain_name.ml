@@ -13,7 +13,7 @@ let [@inline always] check_host_label s =
       | _ -> false)
     s (* only LDH (letters, digits, hyphen)! *)
 
-let host t =
+let host_exn t =
   (* TLD should not be all-numeric! *)
   if
     (if Array.length t > 0 then
@@ -21,9 +21,13 @@ let host t =
      else true) &&
     Array.for_all check_host_label t
   then
-    Ok t
+    t
   else
-    Error (`Msg "invalid host name")
+    invalid_arg "invalid host name"
+
+let host t =
+  try Ok (host_exn t) with
+  | Invalid_argument e -> Error (`Msg e)
 
 let check_service_label s =
   match String.cut ~sep:"_" s with
@@ -58,7 +62,7 @@ let [@inline always] check_label_length s =
 let [@inline always] check_total_length t =
   Array.fold_left (fun acc s -> acc + 1 + String.length s) 1 t <= 255
 
-let service t =
+let service_exn t =
   let l = Array.length t in
   if
     if l > 2 then
@@ -71,9 +75,13 @@ let service t =
     else
       false
   then
-    Ok t
+    t
   else
-    Error (`Msg "invalid service name")
+    invalid_arg "invalid service name"
+
+let service t =
+  try Ok (service_exn t) with
+  | Invalid_argument e -> Error (`Msg e)
 
 let domain t = t
 
@@ -81,32 +89,32 @@ let [@inline always] check t =
   Array.for_all check_label_length t &&
   check_total_length t
 
-let prepend_exn xs lbl =
+let prepend_label_exn xs lbl =
   let n = Array.make 1 lbl in
   let n = Array.append xs n in
   if check_label_length lbl && check_total_length n then n
   else invalid_arg "invalid domain name"
 
-let prepend xs lbl =
-  try Ok (prepend_exn xs lbl) with
+let prepend_label xs lbl =
+  try Ok (prepend_label_exn xs lbl) with
   | Invalid_argument e -> Error (`Msg e)
 
-let drop_labels_exn ?(back = false) ?(amount = 1) t =
+let drop_label_exn ?(back = false) ?(amount = 1) t =
   let len = Array.length t - amount
   and start = if back then amount else 0
   in
   Array.sub t start len
 
-let drop_labels ?back ?amount t =
-  try Ok (drop_labels_exn ?back ?amount t) with
+let drop_label ?back ?amount t =
+  try Ok (drop_label_exn ?back ?amount t) with
   | Invalid_argument _ -> Error (`Msg "couldn't drop labels")
 
-let concat_exn pre post =
+let append_exn pre post =
   let r = Array.append post pre in
   if check_total_length r then r else invalid_arg "invalid domain name"
 
-let concat pre post =
-  try Ok (concat_exn pre post) with
+let append pre post =
+  try Ok (append_exn pre post) with
   | Invalid_argument _ -> Error (`Msg "couldn't concatenate domain names")
 
 let of_strings_exn xs =
