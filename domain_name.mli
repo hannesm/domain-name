@@ -90,7 +90,7 @@ val service_exn : 'a t -> [ `service ] t
 val domain : 'a t -> [ `domain ] t
 (** [domain t] is the [`domain t]. *)
 
-val sub : subdomain:'a t -> domain:'a t -> bool
+val sub : subdomain:'a t -> domain:'b t -> bool
 (** [sub ~subdomain ~domain] is [true] if [subdomain] contains any labels
     prepended to [domain]: [foo.bar.com] is a subdomain of [bar.com] and of
     [com], [sub ~subdomain:x ~domain:root] is true for all [x]. *)
