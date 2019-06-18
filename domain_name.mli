@@ -2,30 +2,35 @@
 
 type 'a t
 (** The type of a domain name, a sequence of labels separated by dots.  Each
-    label may contain any bytes. The length of each label may not exceed 63
-    characters.  The total length of a domain name is limited to 253 (its byte
-    representation is 255), but other protocols (such as SMTP) may apply even
-    smaller limits.  A domain name label is case preserving, comparison is done
-    in a case insensitive manner.  Every [t] is a fully qualified domain name,
-    its last label is the [root] label. The specification of domain names
-    originates from {{:https://tools.ietf.org/html/rfc1035}RFC 1035}.
+   label may contain any bytes. The length of each label may not exceed 63
+   characters.  The total length of a domain name is limited to 253 (its byte
+   representation is 255), but other protocols (such as SMTP) may apply even
+   smaller limits.  A domain name label is case preserving, comparison is done
+   in a case insensitive manner.  Every [t] is a fully qualified domain name,
+   its last label is the [root] label. The specification of domain names
+   originates from {{:https://tools.ietf.org/html/rfc1035}RFC 1035}.
 
     The invariants on the length of domain names are preserved throughout the
-    module - no [t] will exist which violates these.
+   module - no [t] will exist which violates these.
 
     Phantom types are used for further name restrictions, {!host} checks for
-    host names: only letters, digits, and hyphen allowed, hyphen not first
-    character of a label, the last label must contain at least on letter.
-    {!service} checks for a service name: first label is a service name:
-    1-15 characters, no double-hyphen, hyphen not first or last charactes, only
-    letters, digits and hyphen allowed, and the second label is a protocol
-    (_tcp or _udp or _sctp).
+   host names ([`host t]): only letters, digits, and hyphen allowed, hyphen not
+   first character of a label, the last label must contain at least on letter.
+   {!service} checks for a service name ([`service t]): its first label is a
+   service name: 1-15 characters, no double-hyphen, hyphen not first or last
+   charactes, only letters, digits and hyphen allowed, and the second label is a
+   protocol (_tcp or _udp or _sctp).
+
+    When a [t] is constructed (either from a string, etc.), it is a [`domain t].
+   Subsequent modifications, such as adding or removing labels, appending, of
+   any kind of name result in a [`domain t], which needs to be checked for
+   [`host t] or [`service t] if desired.
 
     Constructing a [t] (via {!of_string}, {!of_string_exn}, {!of_strings} etc.)
-    does not require a trailing dot.
+   does not require a trailing dot.
 
-    {e %%VERSION%% - {{:%%PKG_HOMEPAGE%% }homepage}}
-*)
+
+    {e %%VERSION%% - {{:%%PKG_HOMEPAGE%% }homepage}} *)
 
 (** {2 Constructor} *)
 
