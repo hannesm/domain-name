@@ -72,7 +72,7 @@ let basic_preds () =
   Alcotest.(check bool "_xmpp_server._tcp.foo is no service" false
               (is_service (n_of_s "_xmpp_server._tcp.foo"))) ;
   Alcotest.(check bool "_xmpp-server-server._tcp.foo is no service" false
-              (is_service (n_of_s "_xmpp_server-server._tcp.foo"))) ;
+              (is_service (n_of_s "_xmpp-server-server._tcp.foo"))) ;
   Alcotest.(check bool "_443._tcp.foo is a service" true
               (is_service (n_of_s "_443._tcp.foo"))) ;
   Alcotest.(check bool "foo is no subdomain of foo.bar" false

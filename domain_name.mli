@@ -107,15 +107,15 @@ val prepend_label_exn : 'a t -> string -> [ `domain ] t
 val drop_label : ?back:bool -> ?amount:int -> 'a t ->
   ([ `domain ] t, [> `Msg of string ]) result
 (** [drop_label ~back ~amount t] is either [t], a domain name with [amount]
-    (defaults to 1) labels dropped from the beginning (unless [back] is provided
-    and [true], defaults to [false]).  [drop_label] applied to [foo.com] is
-    [com]. *)
+    (defaults to 1) labels dropped from the beginning - if [back] is provided
+    and [true] (default [false]) labels are dropped from the end.
+    [drop_label (of_string_exn "foo.com") = Ok (of_string_exn "com")],
+    [drop_label ~back:true (of_string_exn "foo.com") = Ok (of_string_exn "foo")].
+*)
 
 val drop_label_exn : ?back:bool -> ?amount:int -> 'a t -> [ `domain ] t
-(** [drop_label_exn ~back ~amount t] is either [t], a domain name with [amount]
-    (defaults to 1) labels dropped from the beginning (unless [back] is provided
-    and [true], defaults to [false]).  [drop_label] applied to [foo.com] is
-    [com].
+(** [drop_label_exn ~back ~amount t], see {!drop_label}. Instead of a [result],
+    the value is returned directly.
 
     @raise Invalid_argument if there are not sufficient labels. *)
 
