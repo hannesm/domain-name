@@ -83,7 +83,7 @@ let service t =
   try Ok (service_exn t) with
   | Invalid_argument e -> Error (`Msg e)
 
-let domain t = t
+let raw t = t
 
 let [@inline always] check t =
   Array.for_all check_label_length t &&
@@ -192,7 +192,7 @@ let sub ~subdomain ~domain =
     cmp 0
 
 module Ordered = struct
-  type t = [ `domain ] s
+  type t = [ `raw ] s
   let compare = compare_domain compare_sub
 end
 

@@ -19,12 +19,12 @@ type 'a t
    {!service} checks for a service name ([`service t]): its first label is a
    service name: 1-15 characters, no double-hyphen, hyphen not first or last
    charactes, only letters, digits and hyphen allowed, and the second label is a
-   protocol (_tcp or _udp or _sctp).
+   protocol ([_tcp] or [_udp] or [_sctp]).
 
-    When a [t] is constructed (either from a string, etc.), it is a [`domain t].
+    When a [t] is constructed (either from a string, etc.), it is a [`raw t].
    Subsequent modifications, such as adding or removing labels, appending, of
-   any kind of name result in a [`domain t], which needs to be checked for
-   [`host t] or [`service t] if desired.
+   any kind of name also result in a [`raw t], which needs to be checked for
+   [`host t] (using {!host}) or [`service t] (using {!service}) if desired.
 
     Constructing a [t] (via {!of_string}, {!of_string_exn}, {!of_strings} etc.)
    does not require a trailing dot.
@@ -34,16 +34,16 @@ type 'a t
 
 (** {2 Constructor} *)
 
-val root : [ `domain ] t
+val root : [ `raw ] t
 (** [root] is the root domain ("."), the empty label. *)
 
 (** {2 String representation} *)
 
-val of_string : string -> ([ `domain ] t, [> `Msg of string ]) result
+val of_string : string -> ([ `raw ] t, [> `Msg of string ]) result
 (** [of_string name] is either [t], the domain name, or an error if the provided
     [name] is not a valid domain name. A trailing dot is not requred. *)
 
-val of_string_exn : string -> [ `domain ] t
+val of_string_exn : string -> [ `raw ] t
 (** [of_string_exn name] is [t], the domain name. A trailing dot is not
     required.
 
@@ -92,8 +92,8 @@ val service_exn : 'a t -> [ `service ] t
 
     @raise Invalid_argument if [t] is not a service names. *)
 
-val domain : 'a t -> [ `domain ] t
-(** [domain t] is the [`domain t]. *)
+val raw : 'a t -> [ `raw ] t
+(** [raw t] is the [`raw t]. *)
 
 val sub : subdomain:'a t -> domain:'b t -> bool
 (** [sub ~subdomain ~domain] is [true] if [subdomain] contains any labels
@@ -101,16 +101,16 @@ val sub : subdomain:'a t -> domain:'b t -> bool
     [com], [sub ~subdomain:x ~domain:root] is true for all [x]. *)
 
 (** {2 Label addition and removal} *)
-val prepend_label : 'a t -> string -> ([ `domain ] t, [> `Msg of string ]) result
+val prepend_label : 'a t -> string -> ([ `raw ] t, [> `Msg of string ]) result
 (** [prepend_label name pre] is either [t], the new domain name, or an error. *)
 
-val prepend_label_exn : 'a t -> string -> [ `domain ] t
+val prepend_label_exn : 'a t -> string -> [ `raw ] t
 (** [prepend_label_exn name pre] is [t], the new domain name.
 
     @raise Invalid_argument if [pre] is not a valid domain name. *)
 
 val drop_label : ?back:bool -> ?amount:int -> 'a t ->
-  ([ `domain ] t, [> `Msg of string ]) result
+  ([ `raw ] t, [> `Msg of string ]) result
 (** [drop_label ~back ~amount t] is either [t], a domain name with [amount]
     (defaults to 1) labels dropped from the beginning - if [back] is provided
     and [true] (default [false]) labels are dropped from the end.
@@ -118,16 +118,16 @@ val drop_label : ?back:bool -> ?amount:int -> 'a t ->
     [drop_label ~back:true (of_string_exn "foo.com") = Ok (of_string_exn "foo")].
 *)
 
-val drop_label_exn : ?back:bool -> ?amount:int -> 'a t -> [ `domain ] t
+val drop_label_exn : ?back:bool -> ?amount:int -> 'a t -> [ `raw ] t
 (** [drop_label_exn ~back ~amount t], see {!drop_label}. Instead of a [result],
     the value is returned directly.
 
     @raise Invalid_argument if there are not sufficient labels. *)
 
-val append : 'a t -> 'b t -> ([ `domain ] t, [> `Msg of string ]) result
+val append : 'a t -> 'b t -> ([ `raw ] t, [> `Msg of string ]) result
 (** [append pre post] is [pre ^ "." ^ post]. *)
 
-val append_exn : 'a t -> 'b t -> [ `domain ] t
+val append_exn : 'a t -> 'b t -> [ `raw ] t
 (** [append_exn pre post] is [pre ^ "." ^ post].
 
     @raise Invalid_argument if the result would violate length restrictions. *)
@@ -174,7 +174,7 @@ module Service_set : Set.S with type elt = [ `service ] t
 (** The module of a service name set *)
 
 module Map : sig
-  include Map.S with type key = [ `domain ] t
+  include Map.S with type key = [ `raw ] t
 
   (** [find key t] is [Some a] where a is the binding of [key] in [t]. [None] if
       the [key] is not present. *)
@@ -182,17 +182,17 @@ module Map : sig
 end
 (** The module of a domain name map *)
 
-module Set : Set.S with type elt = [ `domain ] t
+module Set : Set.S with type elt = [ `raw ] t
 (** The module of a domain name set *)
 
 (** {2 String list representation} *)
 
-val of_strings : string list -> ([ `domain ] t, [> `Msg of string ]) result
+val of_strings : string list -> ([ `raw ] t, [> `Msg of string ]) result
 (** [of_strings labels] is either [t], a domain name, or an error if
     the provided [labels] violate domain name constraints. A trailing empty
     label is not required. *)
 
-val of_strings_exn : string list -> [ `domain ] t
+val of_strings_exn : string list -> [ `raw ] t
 (** [of_strings_exn labels] is [t], a domain name.  A trailing empty
     label is not required.
 
@@ -211,7 +211,7 @@ val pp : 'a t Fmt.t
 (**/**)
 (* exposing internal structure, used by udns (but could as well use Obj.magic *)
 
-val of_array : string array -> [ `domain ] t
+val of_array : string array -> [ `raw ] t
 (** [of_array a] is [t], a domain name from [a], an array containing a reversed
     domain name. *)
 
