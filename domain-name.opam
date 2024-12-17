@@ -25,3 +25,4 @@ representation is 255), but other protocols (such as SMTP) may apply even
 smaller limits.  A domain name label is case preserving, comparison is done in a
 case insensitive manner.
 """
+x-maintenance-intent: [ "(latest)" ]
