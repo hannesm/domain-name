@@ -158,14 +158,25 @@ let fqdn () =
               true
               Domain_name.(equal
                              (of_strings_exn [ "example" ; "com" ])
-                             (of_strings_exn [ "example" ; "com" ; "" ])))
+                             (of_strings_exn [ "example" ; "com" ; "" ])));
+  try
+    Alcotest.(check bool {|of_string_exn "" = of_string_exn "."|})
+      true
+      Domain_name.(equal (n_of_s "") (n_of_s "."))
+  with Invalid_argument _ -> Alcotest.fail "invalid domain name for root"
 
 let fqdn_around () =
   let d = n_of_s "foo.com." in
   Alcotest.(check bool "of_string (to_string (of_string 'foo.com.')) works"
               true Domain_name.(equal d (of_string_exn (to_string d)))) ;
   Alcotest.(check bool "of_string (to_string ~trailing:true (of_string 'foo.com.')) works"
-              true Domain_name.(equal d (of_string_exn (to_string ~trailing:true d))))
+              true Domain_name.(equal d (of_string_exn (to_string ~trailing:true d))));
+  try
+    Alcotest.(check bool "of_string (to_string ~trailing:true (of_string '.')) works")
+      true
+      Domain_name.(equal root (of_string_exn (to_string ~trailing:true root)))
+  with Invalid_argument _ -> Alcotest.fail "invalid domain name for root"
+
 
 let drop_labels () =
   let res = n_of_s "foo.com" in
