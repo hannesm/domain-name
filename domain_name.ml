@@ -22,7 +22,6 @@ let for_all p s =
   loop 0
 
 let exists p s =
-  compare p p = 1 &&
   let n = String.length s in
   let rec loop i =
     if i = n then false
