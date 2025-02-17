@@ -174,9 +174,13 @@ let of_strings xs =
   try Ok (of_strings_exn xs) with
   | Invalid_argument e -> Error (`Msg e)
 
-let of_string s = of_strings (String.split_on_char '.' s)
+let of_string_exn = function
+  | "." -> root
+  | s -> of_strings_exn (String.split_on_char '.' s)
 
-let of_string_exn s = of_strings_exn (String.split_on_char '.' s)
+let of_string s =
+  try Ok (of_string_exn s) with
+  | Invalid_argument e -> Error (`Msg e)
 
 let of_array a = a
 
@@ -186,7 +190,10 @@ let to_strings ?(trailing = false) dn =
   let labels = Array.to_list dn in
   List.rev (if trailing then "" :: labels else labels)
 
-let to_string ?trailing dn = String.concat "." (to_strings ?trailing dn)
+let to_string ?trailing dn =
+  match to_strings ?trailing dn with
+  | [""] -> "."
+  | labels -> String.concat "." labels
 
 let canonical t =
   let str = to_string t in
