@@ -1,6 +1,6 @@
 ## v0.4.1 (2025-02-17)
 
-* handle root specially for encoding and decoding (#12 @reynir)
+* handle root specially for encoding and decoding (#12 @reynir, fixes #10)
 
 ## v0.4.0 (2022-01-07)
 
