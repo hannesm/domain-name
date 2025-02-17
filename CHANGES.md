@@ -1,3 +1,7 @@
+## v0.4.1 (2025-02-17)
+
+* handle root specially for encoding and decoding (#12 @reynir)
+
 ## v0.4.0 (2022-01-07)
 
 * compare: conform to canonical DNS name order (RFC 4034, Section 6.1)
