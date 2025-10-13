@@ -61,6 +61,11 @@ let basic_preds () =
   Alcotest.(check bool "f2.23 is not a hostname" false (is_host (n_of_s "f2.23"))) ;
   Alcotest.(check bool "42.23b is a hostname" true (is_host (n_of_s "42.23b"))) ;
   Alcotest.(check bool "'bar.foo is not a hostname" false (is_host (n_of_s "'bar.foo"))) ;
+  Alcotest.(check bool "-foo.bar is not a hostname" false (is_host (n_of_s "'-foo.bar"))) ;
+  Alcotest.(check bool "foo-.bar is not a hostname" false (is_host (n_of_s "foo-.bar"))) ;
+  Alcotest.(check bool "f-o-o.bar is a hostname" true (is_host (n_of_s "f-o-o.bar"))) ;
+  Alcotest.(check bool "2f.b3 is a hostname" true (is_host (n_of_s "2f.b3"))) ;
+  Alcotest.(check bool "2f3.2b3 is a hostname" true (is_host (n_of_s "2f3.2b3"))) ;
   Alcotest.(check bool "root is no service" false (is_service Domain_name.root)) ;
   Alcotest.(check bool "_tcp.foo is no service" false
               (is_service (n_of_s "_tcp.foo"))) ;
