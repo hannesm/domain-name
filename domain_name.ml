@@ -31,6 +31,7 @@ let exists p s =
 
 let [@inline always] check_host_label s =
   String.get s 0 <> '-' && (* leading may not be '-' *)
+  String.get s (String.length s - 1) <> '-' && (* trailing may not be '-' *)
   for_all is_ldh s (* only LDH (letters, digits, hyphen)! *)
 
 let host_exn t =
