@@ -15,7 +15,7 @@ type 'a t
 
     Phantom types are used for further name restrictions, {!host} checks for
    host names ([`host t]): only letters, digits, and hyphen allowed, hyphen not
-   first character of a label, the last label must contain at least on letter.
+   first or last character of a label, the last label must contain at least one letter.
    {!service} checks for a service name ([`service t]): its first label is a
    service name: 1-15 characters, no double-hyphen, hyphen not first or last
    charactes, only letters, digits and hyphen allowed, and the second label is a
